@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ post.title }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <header>
+        <h1>{{ post.title }}</h1>
+        <nav>
+            <a href="{{ url_for('dashboard') }}">Back to Dashboard</a>
+        </nav>
+    </header>
+
+    <main>
+        <!-- <div class="post-content">
+            <p>{{ post.content }}</p>
+            {% if post.attachment_urls %}
+            <h3>Attachments</h3>
+            <ul>
+                {% for url in post.attachment_urls %}
+                <li><a href="{{ url }}" target="_blank">Attachment {{ loop.index }}</a></li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        </div>
+
+        <div class="comments-section">
+            <h2>Comments</h2>
+            {% for comment in comments %}
+            <div class="comment">
+                <p><strong>{{ comment.username }}</strong>: {{ comment.comment }}</p>
+                {% if comment.attachment_urls %}
+                <ul>
+                    {% for url in comment.attachment_urls %}
+                    <li><a href="{{ url }}" target="_blank">Attachment {{ loop.index }}</a></li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div> -->
+
+
+
+        <!-- Display the post -->
+        <div class="post">
+            <h2>{{ post.title }}</h2>
+            <p>{{ post.content }}</p>
+            <!-- Display post attachments -->
+            {% if post.attachment_urls %}
+                <div class="attachments">
+                    <strong>Attachments:</strong>
+                    {% for url in post.attachment_urls %}
+                        <a href="{{ url }}" target="_blank">{{ url.split('/')[-1] }}</a>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Comment form -->
+        <form action="{{ url_for('add_comment', post_id=post._id) }}" method="POST" enctype="multipart/form-data">
+            <textarea name="comment" placeholder="Write a comment..." required></textarea>
+            <input type="file" name="attachments" multiple>
+            <button type="submit">Add Comment</button>
+        </form>
+
+        <!-- Display comments and replies -->
+        <div class="comments">
+            {% for comment in comments %}
+                {% with comment=comment %}
+                    {% include 'comment.html' %}
+                {% endwith %}
+            {% endfor %}
+        </div>
+
+    </main>
+</body>
+</html>

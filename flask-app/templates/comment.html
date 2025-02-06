@@ -1,0 +1,30 @@
+<div class="comment {% if comment.parent_comment_id %}reply{% endif %}">
+    <strong>{{ comment.username }}</strong>
+    <p>{{ comment.comment }}</p>
+    <!-- Display comment attachments -->
+    {% if comment.attachment_urls %}
+        <div class="attachments">
+            <strong>Attachments:</strong>
+            {% for url in comment.attachment_urls %}
+                <a href="{{ url }}" target="_blank">{{ url.split('/')[-1] }}</a>
+            {% endfor %}
+        </div>
+    {% endif %}
+    <!-- Reply form -->
+    <form action="{{ url_for('add_comment', post_id=post._id) }}" method="POST" enctype="multipart/form-data">
+        <textarea name="comment" placeholder="Write a reply..." required></textarea>
+        <input type="hidden" name="parent_comment_id" value="{{ comment._id }}">
+        <input type="file" name="attachments" multiple>
+        <button type="submit">Reply</button>
+    </form>
+    <!-- Display replies recursively -->
+    {% if comment.replies %}
+        <div class="replies">
+            {% for reply in comment.replies %}
+                {% with comment=reply %}
+                    {% include 'comment.html' %}
+                {% endwith %}
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
